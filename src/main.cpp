@@ -1,7 +1,9 @@
 #include <iostream>
+#include "game.hpp"
+using namespace std;
 
 int main() {
-	std::cout << "Hello qbe!" << std::endl;
-	return 0;
+  Game game;
+  game.run();
+  return 0;
 }
-	
