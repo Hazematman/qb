@@ -1,5 +1,6 @@
 #include <iostream>
 #include <SDL2/SDL.h>
+#include "renderer/model.hpp"
 #include "gl_core.hpp"
 #include "game.hpp"
 #include "error.hpp"
@@ -41,6 +42,8 @@ Game::Game() {
   if(!ogl_IsVersionGEQ(3,3)) {
     error("OpenGL 3.3 not supported");
   }
+
+  renderer.init();
 }
 
 void Game::checkSDLError() {
@@ -55,6 +58,21 @@ void Game::run() {
   SDL_Event e;
   bool running = true;
 
+  /* Testing code init here */
+  float verts[] = {
+    -1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f,  1.0f, -1.0f,
+    -1.0f, -1.0f, -1.0f,
+     1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+  };
+
+  ModelData md(verts, sizeof(verts)/sizeof(float));
+  Model quad;
+  quad.setModelData(md);
+  /* End testing code init */
+
   while(running) {
     while(SDL_PollEvent(&e)) {
       switch(e.type) {
@@ -63,7 +81,10 @@ void Game::run() {
       }
     }
 
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    renderer.setBasicState();
+    renderer.drawModel(quad);
 
     SDL_GL_SwapWindow(window);
   }

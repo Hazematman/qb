@@ -1,6 +1,7 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 #include <SDL2/SDL.h>
+#include "renderer/renderer.hpp"
 
 class Game {
   public:
@@ -9,6 +10,7 @@ class Game {
   private:
     SDL_Window *window;
     SDL_GLContext context;
+    Renderer renderer;
     void checkSDLError();
 };
 
