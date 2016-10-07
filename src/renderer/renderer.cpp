@@ -41,5 +41,5 @@ void Renderer::drawModel(Model &model) {
 
   ModelData *data = model.getData();
   glBindVertexArray(data->vao);
-  glDrawArrays(GL_TRIANGLES, 0, 3*data->numTriangles);
+  glDrawElements(GL_TRIANGLES, data->numTriangles*3, GL_UNSIGNED_SHORT, NULL);
 }

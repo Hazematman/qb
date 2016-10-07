@@ -10,16 +10,18 @@ struct Vertex {
 
 class ModelData  {
   public:
-    GLuint vbo;
+    GLuint vbo, ibo;
     GLuint vao;
     int numTriangles;
+    std::vector<short> indicies;
 
-    ModelData(Vertex *vertices, size_t size);
-    ModelData(float *vertices, size_t size);
+    ModelData(Vertex *vertices, size_t v_size, short *indicies, size_t i_size);
+    ModelData(float *vertices, size_t f_size, short *indicies, size_t i_size);
   private:
     std::vector<Vertex> vertices;
 
     void createVao();
+    void createIbo(short *indicies, size_t size);
 };
 
 class Model {
