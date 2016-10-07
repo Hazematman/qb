@@ -63,12 +63,15 @@ void Game::run() {
     -1.0f, -1.0f, -1.0f,
      1.0f, -1.0f, -1.0f,
      1.0f,  1.0f, -1.0f,
-    -1.0f, -1.0f, -1.0f,
-     1.0f,  1.0f, -1.0f,
     -1.0f,  1.0f, -1.0f,
   };
 
-  ModelData md(verts, sizeof(verts)/sizeof(float));
+  short indicies[] = {
+    0,1,2,
+    0,2,3,
+  };
+
+  ModelData md(verts, sizeof(verts)/sizeof(float), indicies, sizeof(indicies)/sizeof(short));
   Model quad;
   quad.setModelData(md);
   /* End testing code init */
