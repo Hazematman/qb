@@ -3,8 +3,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "physics/OBB.hpp"
 
-class OBB;
 
 class DynamicObjects {
 	std::unordered_map<unsigned int, OBB> objects; 
