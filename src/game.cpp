@@ -89,6 +89,8 @@ void Game::run() {
     renderer.setBasicState();
     renderer.drawModel(quad);
 
+    renderer.drawFrame();
+
     SDL_GL_SwapWindow(window);
   }
 }

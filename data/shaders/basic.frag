@@ -7,5 +7,5 @@ layout(location = 1) out vec3 outNormal;
 
 void main() {
   outColour = vec4(colour, 1.0);
-  outNormal = vec3(1,1,1);
+  outNormal = vec3(1,0,0);
 }

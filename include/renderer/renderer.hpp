@@ -12,10 +12,17 @@ struct ShaderBasic {
   Shader shader;
 };
 
+struct ShaderScreen {
+  GLuint colour;
+  GLuint normal;
+  Shader shader;
+};
+
 class Renderer {
   public:
     void init();
     void drawModel(Model &model);
+    void drawFrame();
 
     void setProj(glm::mat4 proj);
     void setView(glm::mat4 view);
@@ -24,6 +31,10 @@ class Renderer {
     glm::mat4 projection;
     glm::mat4 view;
     ShaderBasic basic;
+    ShaderScreen screen;
+
+    GLuint quadVbo;
+    GLuint quadVao;
 
     GLuint frameBuffer;
 
