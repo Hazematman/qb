@@ -9,5 +9,5 @@ out vec4 outColour;
 void main() {
   vec4 colourP = texture(colour, o_uv);
   vec4 normalP = texture(normal, o_uv);
-  outColour = colourP + normalP;
+  outColour = colourP + 0.001*normalP;
 }

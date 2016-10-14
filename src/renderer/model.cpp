@@ -25,6 +25,7 @@ ModelData::ModelData(float *vertices, size_t f_size, short *indicies, size_t i_s
   for(size_t i=0; i < f_size; i+=3) {
     Vertex v;
     v.position = glm::vec3(vertices[i], vertices[i+1], vertices[i+2]);
+    v.normal = glm::vec3(0,0,0);
     this->vertices.push_back(v);
   }
 
@@ -33,9 +34,11 @@ ModelData::ModelData(float *vertices, size_t f_size, short *indicies, size_t i_s
   }
   numTriangles = i_size/3;
 
+  createNormals();
+
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, f_size*sizeof(float), vertices, GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, this->vertices.size()*sizeof(Vertex), &this->vertices[0], GL_STATIC_DRAW);
 
   createIbo(indicies, i_size);
 
@@ -63,6 +66,27 @@ void ModelData::createVao() {
       false,
       sizeof(Vertex),
       &p->position);
+  glVertexAttribPointer(
+      1,
+      3,
+      GL_FLOAT,
+      false,
+      sizeof(Vertex),
+      &p->normal);
+}
+
+void ModelData::createNormals() {
+  for(int i=0; i < numTriangles*3; i+=3) {
+    Vertex &p1 = vertices[indicies[i+0]];
+    Vertex &p2 = vertices[indicies[i+1]];
+    Vertex &p3 = vertices[indicies[i+2]];
+
+    glm::vec3 normal = glm::normalize(glm::cross((p2.position-p1.position),(p3.position-p1.position)));
+
+    p1.normal = glm::normalize(p1.normal + normal);
+    p2.normal = glm::normalize(p2.normal + normal);
+    p3.normal = glm::normalize(p3.normal + normal);
+  }
 }
 
 ModelData *Model::getData() {

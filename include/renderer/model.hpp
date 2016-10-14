@@ -7,6 +7,7 @@
 
 struct Vertex {
   glm::vec3 position;
+  glm::vec3 normal;
 };
 
 class ModelData  {
@@ -23,6 +24,7 @@ class ModelData  {
 
     void createVao();
     void createIbo(short *indicies, size_t size);
+    void createNormals();
 };
 
 class Model {
