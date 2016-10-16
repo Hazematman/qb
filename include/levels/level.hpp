@@ -1,16 +1,19 @@
 #pragma once
 
-typedef struct {
+#include <vector>
+
+
+struct Entity {
   std::vector<int> points;
-} Entity;
+};
 
 class Level {
 public:
-  std::vector<Entity> *entities;
+  std::vector<Entity> entities;
 
 	Level();
-  Level(Entity entity);
+	Level(std::vector<Entity> entities);
 	~Level();
 	
-	printLevelDeets();
+	void printLevelDeets();
 };

@@ -1,10 +1,13 @@
-#import "levels/level.hpp"
+#include <iostream>
+
+#include "levels/level.hpp"
+
 
 Level::Level() {
 
 }
 
-Level::Level(std::vector<Entity> entities;) {
+Level::Level(std::vector<Entity> entities) {
   this->entities = entities;
 }
 
@@ -12,12 +15,11 @@ Level::~Level() {
 
 }
 
-Level::printLevelDeets() {
-  for (int i = 0; i < this->entities->length(); i++){
-    curr_entity = this->entities[i];
-      for (int i = 0; i < curr_entity.points.length(); i++){
-        std::cout << curr_entity.points[i];
-      }
-    std::cout << endl;
+void Level::printLevelDeets() {
+	for (auto it = entities.begin(); it != entities.end(); ++it){
+		for (int i = 0; i < (int)it->points.size(); i++) {
+			std::cout << it->points[i];
+		}
+		std::cout << std::endl;
   }
 }

@@ -33,7 +33,7 @@ void Renderer::setView(glm::mat4 view) {
 
 void Renderer::drawModel(Model &model) {
   /* Set model matrix */
-  glm::mat4 modelMat = glm::translate(glm::mat4(1), model.position);
+  glm::mat4 modelMat = glm::translate(glm::mat4(1), model.pos);
   glUniformMatrix4fv(basic.model, 1, false, &modelMat[0][0]);
 
   /* Set model colour */

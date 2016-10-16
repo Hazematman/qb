@@ -1,4 +1,6 @@
 #include "renderer/model.hpp"
+#include <glm/gtc/matrix_transform.hpp>
+
 using namespace std;
 
 ModelData::ModelData(Vertex *vertices, size_t v_size, short *indicies, size_t i_size) {
@@ -68,10 +70,32 @@ ModelData *Model::getData() {
 }
 
 Model::Model() {
-  position = glm::vec3(0,0,0);
+  pos = glm::vec3(0,0,0);
+  rot = glm::quat_cast(glm::mat3(1));
+  scale = glm::vec3(0, 0, 0);
+
   colour = glm::vec3(1,1,1);
+  data = NULL;
 }
+
+
+Model::Model(glm::vec3 pos, glm::vec3 rot, glm::vec3 scale,
+	      glm::vec3 colour, ModelData *data)
+	: pos(pos), rot(rot), scale(scale), colour(colour), data(data)
+{ }
+
 
 void Model::setModelData(ModelData &data) {
   this->data = &data;
+}
+
+
+glm::mat4 Model::getTransormMat() {
+	// scale -> rotate -> translate
+	glm::mat4 t = glm::mat4(1);
+	t = glm::scale(t, scale);
+	t = t * glm::mat4_cast(rot);
+	t = glm::translate(t, pos);
+
+	return t;
 }

@@ -1,6 +1,7 @@
 #ifndef MODEL_HPP
 #define MODEL_HPP
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include <gl_core.hpp>
 #include <vector>
 
@@ -25,15 +26,23 @@ class ModelData  {
 };
 
 class Model {
-  public:
-    glm::vec3 position;
-    glm::vec3 colour;
+public:
+	glm::vec3 pos;
+	glm::quat rot;
+	glm::vec3 scale; 
 
-    Model();
-    void setModelData(ModelData &data);
-    ModelData *getData();
-  private:
-    ModelData *data;
+	glm::vec3 colour;
+
+	Model();
+	Model(glm::vec3 pos, glm::vec3 rot, glm::vec3 scale,
+	      glm::vec3 colour, ModelData *data);
+	void setModelData(ModelData &data);
+	ModelData *getData();
+	glm::mat4 getTransormMat();
+
+
+private:
+	ModelData *data;
 };
 
 #endif
