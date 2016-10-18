@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include "renderer/model.hpp"
 #include "renderer/shader.hpp"
+#include "renderer/camera.hpp"
 #include  "gl_core.hpp"
 
 struct ShaderBasic {
@@ -20,12 +21,16 @@ struct ShaderScreen {
 
 class Renderer {
   public:
+    Camera camera;
+
     void init();
     void drawModel(Model &model);
     void drawFrame();
 
+    void setProj(int width, int height);
     void setProj(glm::mat4 proj);
     void setView(glm::mat4 view);
+    void setView();
     void setBasicState();
   private:
     glm::mat4 projection;

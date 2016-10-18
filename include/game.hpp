@@ -10,6 +10,7 @@ class Game {
   private:
     SDL_Window *window;
     SDL_GLContext context;
+    int width, height;
     Renderer renderer;
     void checkSDLError();
 };
