@@ -23,16 +23,18 @@ class Renderer {
   public:
     Camera camera;
 
-    void init();
+    void init(int width, int height);
     void drawModel(Model &model);
     void drawFrame();
 
+    void resize(int width, int height);
     void setProj(int width, int height);
     void setProj(glm::mat4 proj);
     void setView(glm::mat4 view);
     void setView();
     void setBasicState();
   private:
+    int width, height;
     glm::mat4 projection;
     glm::mat4 view;
     ShaderBasic basic;
@@ -46,6 +48,7 @@ class Renderer {
     /* Gbuffer works like this
      * Texture 0 is RGB colour
      * Texture 1 is XYZ normals
+     * Texture 2 is depth information
      */
     GLuint gbuffer[3];
     GLuint depthbuffer;

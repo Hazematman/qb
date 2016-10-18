@@ -47,7 +47,7 @@ Game::Game() {
     error("OpenGL 3.3 not supported");
   }
 
-  renderer.init();
+  renderer.init(width, height);
 }
 
 void Game::checkSDLError() {
@@ -128,6 +128,11 @@ void Game::run() {
               break;
             case SDL_WINDOWEVENT_FOCUS_LOST:
               SDL_SetRelativeMouseMode(SDL_FALSE);
+              break;
+            case SDL_WINDOWEVENT_RESIZED:
+              width = e.window.data1;
+              height = e.window.data2;
+              renderer.resize(width, height);
               break;
           }
           break;
