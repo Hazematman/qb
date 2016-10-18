@@ -10,4 +10,6 @@ struct OBB {
 
 	OBB();
 	~OBB();
+
+	int testAgainst(OBB &b);
 };

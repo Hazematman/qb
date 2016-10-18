@@ -4,24 +4,19 @@
 #include <vector>
 
 #include "physics/OBB.hpp"
+#include "physics/Objects.hpp"
 #include "renderer/model.hpp"
 
 
-class DynamicObjects {
-  int idCounter;
-  int getID() { return idCounter++; }
 
-	std::unordered_map<int, OBB> objects; 
-	std::unordered_map<int, Model> objectModels; 
-
-	std::unordered_map<int, ModelData> modelData;
-
-	int testCollision(int id1, int id2);
+class DynamicObjects : public Objects {
 	int collideAllAgainst(int objID);
 	int collideAllObjects();
 public:
 	DynamicObjects();
 	~DynamicObjects();
+
+	glm::mat4 getObjectTransform(int id);
 
 	// Returns id of model for reuse for future objects
   int addModelData(Vertex *vertices, std::size_t v_size,

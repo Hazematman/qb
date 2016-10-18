@@ -1,19 +1,18 @@
 #pragma once
 
 #include <vector>
+#include <string>
+
+#include "physics/Objects.hpp"
 
 
-struct Entity {
-  std::vector<int> points;
-};
-
-class Level {
-public:
-  std::vector<Entity> entities;
-
-	Level();
-	Level(std::vector<Entity> entities);
-	~Level();
+class Level : public Objects {
 	
-	void printLevelDeets();
+	void writeLevelData(std::string path);
+
+public:
+	Level();
+	~Level();
+
+	
 };
