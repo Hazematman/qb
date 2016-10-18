@@ -9,5 +9,5 @@ smooth in vec3 o_normal;
 
 void main() {
   outColour = vec4(colour, 1.0);
-  outNormal = o_normal;
+  outNormal = normalize(o_normal);
 }

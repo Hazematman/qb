@@ -1,5 +1,6 @@
-#include "renderer/model.hpp"
+#include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
+#include "renderer/model.hpp"
 
 using namespace std;
 
@@ -59,6 +60,7 @@ void ModelData::createVao() {
 
   Vertex *p = NULL;
   glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
   glVertexAttribPointer(
       0,
       3,
@@ -95,10 +97,10 @@ ModelData *Model::getData() {
 
 Model::Model() {
   pos = glm::vec3(0,0,0);
-  rot = glm::quat_cast(glm::mat3(1));
-  scale = glm::vec3(0, 0, 0);
+  rot = glm::quat_cast(glm::mat4(1));
+  scale = glm::vec3(1, 1, 1);
 
-  colour = glm::vec3(1,1,1);
+  colour = glm::vec3(1, 1, 1);
   data = NULL;
 }
 
@@ -118,8 +120,8 @@ glm::mat4 Model::getTransormMat() {
 	// scale -> rotate -> translate
 	glm::mat4 t = glm::mat4(1);
 	t = glm::scale(t, scale);
-	t = t * glm::mat4_cast(rot);
-	t = glm::translate(t, pos);
+	t *= glm::mat4_cast(rot);
+	t *= glm::translate(t, pos);
 
 	return t;
 }

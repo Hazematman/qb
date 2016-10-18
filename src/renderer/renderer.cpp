@@ -29,11 +29,13 @@ void Renderer::init(int width, int height) {
 
   screen.colour = screen.shader.getUniform("colour");
   screen.normal = screen.shader.getUniform("normal");
+  screen.depth = screen.shader.getUniform("depth");
 
   basic.shader.compile("../data/shaders/basic.vert", "../data/shaders/basic.frag");
   glUseProgram(basic.shader.getID());
 
   basic.model = basic.shader.getUniform("model");
+  basic.modelIT = basic.shader.getUniform("modelIT");
   basic.viewProjection = basic.shader.getUniform("viewProjection");
   basic.colour = basic.shader.getUniform("colour");
 
@@ -131,7 +133,7 @@ void Renderer::createGbuffer() {
   }
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, gbuffer[2], 0);
 
-  GLenum drawBuffer[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_DEPTH_ATTACHMENT};
+  GLenum drawBuffer[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
   glDrawBuffers(sizeof(drawBuffer)/sizeof(GLenum), drawBuffer);
 
   if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
@@ -157,8 +159,10 @@ void Renderer::setView() {
 
 void Renderer::drawModel(Model &model) {
   /* Set model matrix */
-  glm::mat4 modelMat = glm::translate(glm::mat4(1), model.pos);
+  glm::mat4 modelMat = model.getTransormMat();
+  glm::mat3 modelMatInverseTranspose = glm::transpose(glm::inverse(glm::mat3(modelMat)));
   glUniformMatrix4fv(basic.model, 1, false, &modelMat[0][0]);
+  glUniformMatrix3fv(basic.modelIT, 1, false, &modelMatInverseTranspose[0][0]);
 
   /* Set model colour */
   glUniform3fv(basic.colour, 1, &model.colour[0]);
@@ -185,6 +189,7 @@ void Renderer::drawFrame() {
 
   glUniform1i(screen.colour, 0);
   glUniform1i(screen.normal, 1);
+  glUniform1i(screen.depth, 2);
   glBindVertexArray(quadVao);
 
   glDrawArrays(GL_TRIANGLE_FAN, 0, 4);

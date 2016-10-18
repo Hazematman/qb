@@ -8,6 +8,7 @@
 
 struct ShaderBasic {
   GLuint model;
+  GLuint modelIT;
   GLuint viewProjection;
   GLuint colour;
   Shader shader;
@@ -16,6 +17,7 @@ struct ShaderBasic {
 struct ShaderScreen {
   GLuint colour;
   GLuint normal;
+  GLuint depth;
   Shader shader;
 };
 
