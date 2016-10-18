@@ -29,7 +29,11 @@ void Renderer::init(int width, int height) {
 
   screen.colour = screen.shader.getUniform("colour");
   screen.normal = screen.shader.getUniform("normal");
-  screen.depth = screen.shader.getUniform("depth");
+  screen.pos = screen.shader.getUniform("pos");
+  //screen.depth = screen.shader.getUniform("depth");
+  screen.lights = screen.shader.getUniform("lights");
+  screen.numLights = screen.shader.getUniform("numLights");
+  screen.cameraPos = screen.shader.getUniform("cameraPos");
 
   basic.shader.compile("../data/shaders/basic.vert", "../data/shaders/basic.frag");
   glUseProgram(basic.shader.getID());
@@ -74,6 +78,8 @@ void Renderer::init(int width, int height) {
   this->width = width;
   this->height = height;
   createGbuffer();
+
+  this->numLights = 0;
 }
 
 void Renderer::resize(int width, int height) {
@@ -87,6 +93,9 @@ void Renderer::resize(int width, int height) {
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
   glBindTexture(GL_TEXTURE_2D, gbuffer[2]);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_FLOAT, NULL);
+
+  glBindTexture(GL_TEXTURE_2D, gbuffer[3]);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
 
   glViewport(0, 0, width, height);
@@ -104,7 +113,7 @@ void Renderer::createGbuffer() {
   glGenFramebuffers(1, &frameBuffer);
   glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 
-  glGenTextures(3, gbuffer);
+  glGenTextures(4, gbuffer);
 
   glBindTexture(GL_TEXTURE_2D, gbuffer[0]);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
@@ -117,6 +126,11 @@ void Renderer::createGbuffer() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
   glBindTexture(GL_TEXTURE_2D, gbuffer[2]);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+  glBindTexture(GL_TEXTURE_2D, gbuffer[3]);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -128,12 +142,12 @@ void Renderer::createGbuffer() {
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthbuffer); 
 
   /* Attach Colour buffer */
-  for(int i=0; i < 2; i++) {
+  for(int i=0; i < 3; i++) {
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, gbuffer[i], 0);
   }
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, gbuffer[2], 0);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, gbuffer[3], 0);
 
-  GLenum drawBuffer[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+  GLenum drawBuffer[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
   glDrawBuffers(sizeof(drawBuffer)/sizeof(GLenum), drawBuffer);
 
   if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
@@ -172,11 +186,21 @@ void Renderer::drawModel(Model &model) {
   glDrawElements(GL_TRIANGLES, data->numTriangles*3, GL_UNSIGNED_SHORT, NULL);
 }
 
+void Renderer::addLight(glm::vec3 pos) {
+  if(numLights < 16) {
+    lights[numLights] = pos;
+    numLights++;
+  }
+}
+
 void Renderer::drawFrame() {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glUseProgram(screen.shader.getID());
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glDisable(GL_DEPTH_TEST);
+
+  glActiveTexture(GL_TEXTURE3);
+  glBindTexture(GL_TEXTURE_2D, gbuffer[3]);
 
   glActiveTexture(GL_TEXTURE2);
   glBindTexture(GL_TEXTURE_2D, gbuffer[2]);
@@ -189,7 +213,12 @@ void Renderer::drawFrame() {
 
   glUniform1i(screen.colour, 0);
   glUniform1i(screen.normal, 1);
-  glUniform1i(screen.depth, 2);
+  glUniform1i(screen.pos, 2);
+  glUniform1i(screen.depth, 3);
+
+  glUniform3fv(screen.lights, 16, &lights[0][0]);
+  glUniform3fv(screen.cameraPos, 1, &camera.position[0]);
+  glUniform1i(screen.numLights, numLights);
   glBindVertexArray(quadVao);
 
   glDrawArrays(GL_TRIANGLE_FAN, 0, 4);

@@ -18,6 +18,10 @@ struct ShaderScreen {
   GLuint colour;
   GLuint normal;
   GLuint depth;
+  GLuint pos;
+  GLuint lights;
+  GLuint numLights;
+  GLuint cameraPos;
   Shader shader;
 };
 
@@ -35,8 +39,11 @@ class Renderer {
     void setView(glm::mat4 view);
     void setView();
     void setBasicState();
+    void addLight(glm::vec3 pos);
   private:
     int width, height;
+    glm::vec3 lights[16];
+    int numLights;
     glm::mat4 projection;
     glm::mat4 view;
     ShaderBasic basic;
@@ -50,9 +57,10 @@ class Renderer {
     /* Gbuffer works like this
      * Texture 0 is RGB colour
      * Texture 1 is XYZ normals
-     * Texture 2 is depth information
+     * Texture 2 is XYZ position
+     * Texture 3 is depth information
      */
-    GLuint gbuffer[3];
+    GLuint gbuffer[4];
     GLuint depthbuffer;
 
     void createGbuffer();

@@ -98,8 +98,27 @@ void Game::run() {
   };
 
   ModelData md(verts, sizeof(verts)/sizeof(float), indicies, sizeof(indicies)/sizeof(short));
-  Model quad;
-  quad.setModelData(md);
+
+  /* Create basic scene for lighting */
+  Model floor, wall1, wall2, wall3, ceil;
+  floor.setModelData(md);
+  wall1.setModelData(md);
+  wall2.setModelData(md);
+  wall3.setModelData(md);
+  ceil.setModelData(md);
+  floor.scale = glm::vec3(2,1,2);
+
+  wall1.scale = glm::vec3(2,2,1);
+  wall1.pos = glm::vec3(0,1.5,3);
+
+  wall2.scale = glm::vec3(1,2,2);
+  wall2.pos = glm::vec3(3,1.5,0);
+
+  wall3.scale = glm::vec3(1,2,2);
+  wall3.pos = glm::vec3(-3,1.5,0);
+
+  renderer.addLight(glm::vec3(0,1.5,0));
+
   /* End testing code init */
 
   const uint8_t *keystate = SDL_GetKeyboardState(NULL);
@@ -158,7 +177,11 @@ void Game::run() {
     renderer.setProj(width, height);
     renderer.setView();
     renderer.setBasicState();
-    renderer.drawModel(quad);
+
+    renderer.drawModel(floor);
+    renderer.drawModel(wall1);
+    renderer.drawModel(wall2);
+    renderer.drawModel(wall3);
 
     renderer.drawFrame();
 
